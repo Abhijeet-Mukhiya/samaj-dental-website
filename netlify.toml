@@ -1,0 +1,18 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Browser-safe publishable Supabase configuration for the connected demo.
+# Never place a Supabase service-role key in this file.
+[build.environment]
+  VITE_SUPABASE_URL = "https://kmfiecnlmgkgtmnuziux.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_VbmFSzykbN_oZwPZcMjpHA_P7qCrLUy"
+  VITE_CLINIC_ID = "a1010101-1010-1010-1010-101010101010"
+  VITE_SITE_URL = "https://poetic-churros-8ac9f5.netlify.app"
+
+# Vite + React Router SPA fallback. Keep /admin and every client-side route
+# on index.html so the browser router can render the correct page.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

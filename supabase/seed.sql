@@ -1,0 +1,36 @@
+-- Safe demo seed data. This file is for local/demo environments only.
+-- Every doctor, service, price, appointment and review below is explicitly a placeholder.
+
+insert into public.clinics (id, name, address, phone, whatsapp, timezone)
+values ('a1010101-1010-1010-1010-101010101010', 'Samaj Dental Care Clinic - Pepsicola Chowk', 'Suncity, Pepsicola Chowk, Mahadev Chaur Sadak', '+977 9820231230', '9779820231230', 'Asia/Kathmandu')
+on conflict (id) do nothing;
+
+insert into public.clinic_hours (clinic_id, day_of_week, open_time, close_time, is_open)
+select 'a1010101-1010-1010-1010-101010101010', d, '08:00', '20:00', true from generate_series(0,6) d
+on conflict (clinic_id, day_of_week) do update set open_time=excluded.open_time, close_time=excluded.close_time, is_open=excluded.is_open;
+
+insert into public.doctors (id, clinic_id, name, specialization, bio, active, display_title, qualification, experience_years, languages)
+values
+('b800a2b1-dae8-4270-a62c-76ab75184139','a1010101-1010-1010-1010-101010101010','Dr. Anisha Sharma','General & Preventive Dentistry','SAMPLE DEMONSTRATION PROFILE — Replace with clinic-approved biography before launch.',true,'General & Preventive Dentist — Sample Profile','Qualification field — sample',null,array['Nepali','English']),
+('86e7117c-6c80-44ee-8868-60908d04fd86','a1010101-1010-1010-1010-101010101010','Dr. Rohan Mehta','Restorative & Cosmetic Dentistry','SAMPLE DEMONSTRATION PROFILE — Replace with clinic-approved biography before launch.',true,'Restorative & Cosmetic Dentist — Sample Profile','Qualification field — sample',null,array['Nepali','English'])
+on conflict (id) do update set active=excluded.active, specialization=excluded.specialization, bio=excluded.bio, display_title=excluded.display_title, qualification=excluded.qualification, experience_years=excluded.experience_years, languages=excluded.languages;
+
+insert into public.doctor_schedules (doctor_id, day_of_week, start_time, end_time, slot_duration_minutes, break_start_time, break_end_time, active)
+select d.id, day_no, '09:00', '17:00', 30, '13:00', '14:00', true
+from public.doctors d cross join generate_series(0,6) day_no
+where d.id in ('b800a2b1-dae8-4270-a62c-76ab75184139','86e7117c-6c80-44ee-8868-60908d04fd86')
+on conflict (doctor_id, day_of_week) do update set start_time=excluded.start_time,end_time=excluded.end_time,slot_duration_minutes=excluded.slot_duration_minutes,break_start_time=excluded.break_start_time,break_end_time=excluded.break_end_time,active=excluded.active;
+
+insert into public.services (id, clinic_id, name, description, duration_minutes, price, category, icon_name, short_description, full_description, benefits, active)
+values
+('570216f4-5ed8-4b49-9879-9bc6cdba18f2','a1010101-1010-1010-1010-101010101010','General Dental Consultation','SAMPLE SERVICE — Replace with clinic-approved information before launch.',30,500,'General','Smile','Routine dental assessment and treatment planning.','SAMPLE SERVICE — Replace with clinic-approved service description before launch.',array['Professional assessment','Clear treatment planning','Follow-up guidance'],true),
+('9ca09fc4-3f4e-4f87-b79a-bfdb1dc5ef0c','a1010101-1010-1010-1010-101010101010','Dental Cleaning','SAMPLE SERVICE — Replace with clinic-approved information before launch.',45,1500,'General','Sparkles','Professional cleaning for routine oral-health maintenance.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Professional assessment','Cleaning plan','Home-care guidance'],true),
+('60e5e833-6917-4932-a8c5-351c60e2a17f','a1010101-1010-1010-1010-101010101010','Dental Filling','SAMPLE SERVICE — Replace with clinic-approved information before launch.',45,2000,'General','CirclePlus','Assessment and restorative options for cavities and damaged teeth.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Assessment before treatment','Restorative options','Follow-up guidance'],true),
+('ec26cfbe-aee4-4dc6-86e8-9aa0228bc311','a1010101-1010-1010-1010-101010101010','Root Canal Treatment','SAMPLE SERVICE — Replace with clinic-approved information before launch.',60,8000,'General','ShieldCheck','Assessment and treatment options for problems affecting the inside of a tooth.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Professional assessment','Treatment planning','Follow-up care'],true),
+('220f2b73-c64e-49a6-bb52-d2bdd012d455','a1010101-1010-1010-1010-101010101010','Tooth Extraction','SAMPLE SERVICE — Replace with clinic-approved information before launch.',30,2500,'Surgical','Activity','Assessment and extraction when clinically appropriate.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Clinical assessment','Procedure-specific guidance','Follow-up planning'],true),
+('d97b352a-680a-4340-9b2d-3c720a3cac9c','a1010101-1010-1010-1010-101010101010','Cosmetic Dental Consultation','SAMPLE SERVICE — Replace with clinic-approved information before launch.',30,1000,'Cosmetic','Sparkles','Consultation for cosmetic and restorative dental options.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Individual assessment','Treatment options','Clear planning'],true),
+('a2f0c1d4-9f0d-4d7b-8d8f-2a5a1b7f1111','a1010101-1010-1010-1010-101010101010','Orthodontic Consultation','SAMPLE SERVICE — Replace with clinic-approved information before launch.',30,null,'Orthodontics','Smile','Consultation for alignment and bite-related concerns.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Alignment assessment','Treatment options','Care planning'],true),
+('a2f0c1d4-9f0d-4d7b-8d8f-2a5a1b7f2222','a1010101-1010-1010-1010-101010101010','Preventive Dental Care','SAMPLE SERVICE — Replace with clinic-approved information before launch.',30,null,'General','ShieldCheck','Routine preventive care and oral-health guidance.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Oral-health assessment','Preventive guidance','Personalized care plan'],true),
+('a2f0c1d4-9f0d-4d7b-8d8f-2a5a1b7f3333','a1010101-1010-1010-1010-101010101010','Restorative Dentistry Consultation','SAMPLE SERVICE — Replace with clinic-approved information before launch.',45,null,'General','CirclePlus','Consultation for restoring damaged or weakened teeth.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Clinical assessment','Restoration options','Treatment planning'],true),
+('a2f0c1d4-9f0d-4d7b-8d8f-2a5a1b7f4444','a1010101-1010-1010-1010-101010101010','Urgent Dental Consultation','SAMPLE SERVICE — Replace with clinic-approved information before launch.',30,null,'Emergency','AlertCircle','Prompt assessment for urgent dental concerns during clinic hours.','SAMPLE SERVICE — Replace with clinic-approved information before launch.',array['Prompt assessment','Clear next steps','Direct clinic guidance'],true)
+on conflict (id) do update set description=excluded.description,duration_minutes=excluded.duration_minutes,price=excluded.price,category=excluded.category,icon_name=excluded.icon_name,short_description=excluded.short_description,full_description=excluded.full_description,benefits=excluded.benefits,active=excluded.active;

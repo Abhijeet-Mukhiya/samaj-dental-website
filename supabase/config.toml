@@ -1,0 +1,12 @@
+# Public appointment and availability endpoints authenticate the caller with the
+# Supabase API key plus application-level origin checks. They intentionally do not
+# require a user JWT because patients book without creating an account.
+[functions.create-appointment]
+verify_jwt = false
+
+[functions.get-availability]
+verify_jwt = false
+
+# When deploying these public functions, set the hosted project's ALLOWED_ORIGINS
+# secret/env value to the exact frontend origins that should be permitted.
+# Demo origin: https://poetic-churros-8ac9f5.netlify.app
